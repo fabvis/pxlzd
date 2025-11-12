@@ -1,4 +1,4 @@
 export const runtime='nodejs'
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/session'
-export async function GET(){ const s=getSession(); if(!s) return NextResponse.json({ok:false,user:null}); return NextResponse.json({ok:true,user:{username:s.sub,exp:s.exp,iat:s.iat}}) }
+export async function GET(){ const s=await getSession(); if(!s) return NextResponse.json({ok:false,user:null}); return NextResponse.json({ok:true,user:{username:s.sub,exp:s.exp,iat:s.iat}}) }

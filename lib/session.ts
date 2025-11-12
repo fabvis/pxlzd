@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import { cookies } from 'next/headers'
+type MutableCookies=Awaited<ReturnType<typeof cookies>>
 const COOKIE_NAME='pxlzd_session'
 const EXPIRES_MINUTES=60*24*7
 function b64url(b:Buffer){return b.toString('base64').replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
@@ -25,9 +26,17 @@ export function verifySession(token?:string):SessionPayload|null{
     return payload
   }catch{ return null }
 }
-export function setSessionCookie(token:string){
-  const c=cookies(); const maxAge=EXPIRES_MINUTES*60
-  c.set(COOKIE_NAME, token, { httpOnly:true, sameSite:'lax', secure:process.env.NODE_ENV==='production', path:'/', maxAge })
+export async function setSessionCookie(token:string){
+  const cookieStore:MutableCookies=await cookies()
+  const maxAge=EXPIRES_MINUTES*60
+  cookieStore.set(COOKIE_NAME, token, { httpOnly:true, sameSite:'lax', secure:process.env.NODE_ENV==='production', path:'/', maxAge })
 }
-export function getSession(){ const c=cookies(); const t=c.get(COOKIE_NAME)?.value; return verifySession(t) }
-export function clearSession(){ const c=cookies(); c.set(COOKIE_NAME,'',{ httpOnly:true, path:'/', maxAge:0 }) }
+export async function getSession(){
+  const cookieStore:MutableCookies=await cookies()
+  const token=cookieStore.get(COOKIE_NAME)?.value
+  return verifySession(token)
+}
+export async function clearSession(){
+  const cookieStore:MutableCookies=await cookies()
+  cookieStore.set(COOKIE_NAME,'',{ httpOnly:true, path:'/', maxAge:0 })
+}
