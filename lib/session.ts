@@ -26,8 +26,16 @@ export function verifySession(token?:string):SessionPayload|null{
   }catch{ return null }
 }
 export async function setSessionCookie(token:string){
-  const c=await cookies(); const maxAge=EXPIRES_MINUTES*60
-  c.set(COOKIE_NAME, token, { httpOnly:true, sameSite:'lax', secure:process.env.NODE_ENV==='production', path:'/', maxAge })
+  const cookieStore=await cookies()
+  const maxAge=EXPIRES_MINUTES*60
+  cookieStore.set(COOKIE_NAME, token, { httpOnly:true, sameSite:'lax', secure:process.env.NODE_ENV==='production', path:'/', maxAge })
 }
-export async function getSession(){ const c=await cookies(); const t=c.get(COOKIE_NAME)?.value; return verifySession(t) }
-export async function clearSession(){ const c=await cookies(); c.set(COOKIE_NAME,'',{ httpOnly:true, path:'/', maxAge:0 }) }
+export async function getSession(){
+  const cookieStore=await cookies()
+  const token=cookieStore.get(COOKIE_NAME)?.value
+  return verifySession(token)
+}
+export async function clearSession(){
+  const cookieStore=await cookies()
+  cookieStore.set(COOKIE_NAME,'',{ httpOnly:true, path:'/', maxAge:0 })
+}
