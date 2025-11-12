@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import { cookies } from 'next/headers'
+type MutableCookies=Awaited<ReturnType<typeof cookies>>
 const COOKIE_NAME='pxlzd_session'
 const EXPIRES_MINUTES=60*24*7
 function b64url(b:Buffer){return b.toString('base64').replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
