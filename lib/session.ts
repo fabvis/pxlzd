@@ -27,16 +27,16 @@ export function verifySession(token?:string):SessionPayload|null{
   }catch{ return null }
 }
 export async function setSessionCookie(token:string){
-  const cookieStore:MutableCookies=await cookies()
+  const cookieStore=await cookies()
   const maxAge=EXPIRES_MINUTES*60
   cookieStore.set(COOKIE_NAME, token, { httpOnly:true, sameSite:'lax', secure:process.env.NODE_ENV==='production', path:'/', maxAge })
 }
 export async function getSession(){
-  const cookieStore:MutableCookies=await cookies()
+  const cookieStore=await cookies()
   const token=cookieStore.get(COOKIE_NAME)?.value
   return verifySession(token)
 }
 export async function clearSession(){
-  const cookieStore:MutableCookies=await cookies()
+  const cookieStore=await cookies()
   cookieStore.set(COOKIE_NAME,'',{ httpOnly:true, path:'/', maxAge:0 })
 }
